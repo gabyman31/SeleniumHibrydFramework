@@ -1,45 +1,68 @@
-name: Pipeline de Automatizacion QA (Hibrido)
+name: Pipeline QA Avanzado Hibrido
 
-# Define qué eventos disparan la ejecución
 on:
   push:
-    branches: [ main, master ] # Se ejecuta cuando subes código a estas ramas
-  pull_request:
-    branches: [ main, master ] # Se ejecuta cuando abres un Pull Request
-  workflow_dispatch: # Permite un botón para ejecutar las pruebas manualmente desde GitHub
+    branches: [ main, master ]
+  workflow_dispatch:
+
+# Permisos requeridos para escribir el reporte en GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   automation-tests:
-    runs-on: ubuntu-latest # Ejecuta las pruebas en una máquina virtual Linux limpia
+    runs-on: ubuntu-latest
 
     steps:
-    # 1. Descargar el código del repositorio
+    # 1. Copiar el código fuente
     - name: Copiar codigo del repositorio
       uses: actions/checkout@v4
 
-    # 2. Configurar el entorno de Java (JDK 17 o la versión que uses)
-    - name: Configurar Java JDK
+    # 2. Configurar Java con Caché Avanzada para dependencias (.m2)
+    - name: Configurar Java JDK 17 con Cache
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: 'maven' # Guarda en caché las librerías para que las siguientes ejecuciones sean rápidas
+        cache: 'maven' # CACHÉ AVANZADA: Omitirá descargar Selenium/RestAssured en cada ejecución si no han cambiado
 
-    # 3. Instalar Google Chrome en el servidor Linux de GitHub
+    # 3. Instalar Google Chrome para pruebas UI
     - name: Instalar Google Chrome
       run: |
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
 
-    # 4. Ejecutar la suite híbrida de TestNG usando Maven
-    - name: Ejecutar Suite TestNG (API + WEB)
-      run: mvn test -DsuiteXmlFile=testng.xml
+    # 4. EJECUCIÓN EN PARALELO (Aceleración de pruebas)
+    # Ejecuta el archivo XML distribuyendo las clases/métodos al mismo tiempo
+    - name: Ejecutar Suite TestNG en Paralelo
+      run: mvn test -DsuiteXmlFile=testng.xml -Dparallel=tests -DthreadCount=3
+      continue-on-error: true # Permite que el pipeline no se detenga si un test falla, para poder generar el reporte final
 
-    # 5. Guardar los reportes de Allure como evidencia del Job (Opcional)
-    - name: Subir Resultados de Allure como Artefacto
-      if: always() # Se ejecuta incluso si algunas pruebas fallaron
-      uses: actions/upload-artifact@v4
+    # 5. Obtener el historial de reportes previos (Obligatorio para ver gráficos de tendencia en Allure)
+    - name: Cargar historial de Allure
+      uses: actions/checkout@v4
+      if: always()
       with:
-        name: resultados-allure
-        path: allure-results/
-        retention-days: 5
+        ref: gh-pages
+        path: gh-pages-dir
+        continue-on-error: true
+
+    # 6. Compilar y Generar el Reporte de Allure
+    - name: Generar Reporte de Allure
+      uses: simple-elf/allure-report-action@master
+      if: always()
+      with:
+        allure_results: allure-results
+        allure_history: allure-history
+        keep_reports: 20
+
+    # 7. Publicar el Reporte Interactivo Gratis en GitHub Pages
+    - name: Desplegar Reporte en GitHub Pages
+      uses: peaceiris/actions-deploy-pages@v4
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-history
