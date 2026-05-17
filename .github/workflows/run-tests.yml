@@ -5,7 +5,6 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-# Permisos requeridos para escribir el reporte en GitHub Pages
 permissions:
   contents: write
   pages: write
@@ -16,31 +15,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Copiar el código fuente
     - name: Copiar codigo del repositorio
       uses: actions/checkout@v4
 
-    # 2. Configurar Java con Caché Avanzada para dependencias (.m2)
+     Tarjeta 2: Configurar Java
     - name: Configurar Java JDK 17 con Cache
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: 'maven' # CACHÉ AVANZADA: Omitirá descargar Selenium/RestAssured en cada ejecución si no han cambiado
+        cache: 'maven'
 
-    # 3. Instalar Google Chrome para pruebas UI
+     Tarjeta 3: Instalar Navegador
     - name: Instalar Google Chrome
       run: |
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
 
-    # 4. EJECUCIÓN EN PARALELO (Aceleración de pruebas)
-    # Ejecuta el archivo XML distribuyendo las clases/métodos al mismo tiempo
+     Tarjeta 4: Ejecución en Paralelo
     - name: Ejecutar Suite TestNG en Paralelo
       run: mvn test -DsuiteXmlFile=testng.xml -Dparallel=tests -DthreadCount=3
-      continue-on-error: true # Permite que el pipeline no se detenga si un test falla, para poder generar el reporte final
+      continue-on-error: true
 
-    # 5. Obtener el historial de reportes previos (Obligatorio para ver gráficos de tendencia en Allure)
+     Tarjeta 5: Historial previo de Allure
     - name: Cargar historial de Allure
       uses: actions/checkout@v4
       if: always()
@@ -49,23 +46,22 @@ jobs:
         path: gh-pages-dir
         continue-on-error: true
 
-	# 6. Compilar y Generar el Reporte de Allure
-	- name: Generar Reporte de Allure
-	  uses: simple-elf/allure-report-action@master
-	  if: always()
-	  with:
-	    allure_results: allure-results
-	    allure_history: allure-history
-	    keep_reports: 20
+     Tarjeta 6: Generar Reporte Allure con su Historia
+    - name: Generar Reporte de Allure
+      uses: simple-elf/allure-report-action@master
+      if: always()
+      with:
+        allure_results: allure-results
+        allure_history: allure-history
+        gh_pages: gh-pages-dir
+        keep_reports: 20
 
-	# 6.5 Subir los archivos generados como artefacto de Pages (Requerido por la acción oficial)
-	- name: Configurar artefacto de Pages
-	  uses: actions/upload-pages-artifact@v3
-	  if: always()
-	  with:
-	    path: allure-history
+     Tarjeta 7: Publicar en GitHub Pages de Forma Limpia
+    - name: Desplegar Reporte en GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-history
 
-	# 7. Publicar el Reporte Interactivo Gratis en GitHub Pages
-	- name: Desplegar Reporte en GitHub Pages
-	  uses: actions/deploy-pages@v4
-	  if: always()
