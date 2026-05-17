@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="3" passed="3" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-05-17T08:57:01 EST" name="Suite Framework Híbrido Completo" finished-at="2026-05-17T08:57:08 EST" duration-ms="6811">
+    <groups>
+    </groups>
+    <test started-at="2026-05-17T08:57:01 EST" name="Pruebas de Servicios Backend API" finished-at="2026-05-17T08:57:08 EST" duration-ms="6768">
+      <class name="api.tests.DogApiTest">
+        <test-method signature="validarColeccionDeRazas()[pri:0, instance:api.tests.DogApiTest@6b09fb41]" started-at="2026-05-17T08:57:01 EST" name="validarColeccionDeRazas" finished-at="2026-05-17T08:57:06 EST" duration-ms="4586" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validarColeccionDeRazas -->
+        <test-method signature="validarDatosCuriososAleatorios()[pri:0, instance:api.tests.DogApiTest@6b09fb41]" started-at="2026-05-17T08:57:06 EST" name="validarDatosCuriososAleatorios" finished-at="2026-05-17T08:57:07 EST" duration-ms="1003" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validarDatosCuriososAleatorios -->
+        <test-method signature="validarRazaEspecificaPorId()[pri:0, instance:api.tests.DogApiTest@6b09fb41]" started-at="2026-05-17T08:57:07 EST" name="validarRazaEspecificaPorId" finished-at="2026-05-17T08:57:08 EST" duration-ms="1053" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validarRazaEspecificaPorId -->
+      </class> <!-- api.tests.DogApiTest -->
+    </test> <!-- Pruebas de Servicios Backend API -->
+    <test started-at="2026-05-17T08:57:08 EST" name="Pruebas de Interfaz Web - Chrome" finished-at="2026-05-17T08:57:08 EST" duration-ms="6">
+    </test> <!-- Pruebas de Interfaz Web - Chrome -->
+    <test started-at="2026-05-17T08:57:08 EST" name="Pruebas de Interfaz Web - Firefox" finished-at="2026-05-17T08:57:08 EST" duration-ms="3">
+    </test> <!-- Pruebas de Interfaz Web - Firefox -->
+    <test started-at="2026-05-17T08:57:08 EST" name="Pruebas de Interfaz Web - Edge" finished-at="2026-05-17T08:57:08 EST" duration-ms="4">
+    </test> <!-- Pruebas de Interfaz Web - Edge -->
+  </suite> <!-- Suite Framework Híbrido Completo -->
+</testng-results>

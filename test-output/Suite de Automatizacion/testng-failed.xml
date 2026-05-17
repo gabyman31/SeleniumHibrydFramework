@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite de Automatizacion]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Pruebas en Edge(failed)">
+    <parameter name="navegador" value="edge"/>
+    <classes>
+      <class name="tests.GoogleTest">
+        <methods>
+          <include name="tearDown"/>
+          <include name="validarBusquedaYClickGoogle"/>
+          <include name="setUp"/>
+        </methods>
+      </class> <!-- tests.GoogleTest -->
+    </classes>
+  </test> <!-- Pruebas en Edge(failed) -->
+</suite> <!-- Failed suite [Suite de Automatizacion] -->

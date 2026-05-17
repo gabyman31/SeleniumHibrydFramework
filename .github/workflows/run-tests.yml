@@ -1,0 +1,45 @@
+name: Pipeline de Automatizacion QA (Hibrido)
+
+# Define qué eventos disparan la ejecución
+on:
+  push:
+    branches: [ main, master ] # Se ejecuta cuando subes código a estas ramas
+  pull_request:
+    branches: [ main, master ] # Se ejecuta cuando abres un Pull Request
+  workflow_dispatch: # Permite un botón para ejecutar las pruebas manualmente desde GitHub
+
+jobs:
+  automation-tests:
+    runs-on: ubuntu-latest # Ejecuta las pruebas en una máquina virtual Linux limpia
+
+    steps:
+    # 1. Descargar el código del repositorio
+    - name: Copiar codigo del repositorio
+      uses: actions/checkout@v4
+
+    # 2. Configurar el entorno de Java (JDK 17 o la versión que uses)
+    - name: Configurar Java JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven' # Guarda en caché las librerías para que las siguientes ejecuciones sean rápidas
+
+    # 3. Instalar Google Chrome en el servidor Linux de GitHub
+    - name: Instalar Google Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    # 4. Ejecutar la suite híbrida de TestNG usando Maven
+    - name: Ejecutar Suite TestNG (API + WEB)
+      run: mvn test -DsuiteXmlFile=testng.xml
+
+    # 5. Guardar los reportes de Allure como evidencia del Job (Opcional)
+    - name: Subir Resultados de Allure como Artefacto
+      if: always() # Se ejecuta incluso si algunas pruebas fallaron
+      uses: actions/upload-artifact@v4
+      with:
+        name: resultados-allure
+        path: allure-results/
+        retention-days: 5
