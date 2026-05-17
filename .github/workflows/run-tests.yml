@@ -49,23 +49,23 @@ jobs:
         path: gh-pages-dir
         continue-on-error: true
 
-		# 6. Compilar y Generar el Reporte de Allure
-		- name: Generar Reporte de Allure
-		  uses: simple-elf/allure-report-action@master
-		  if: always()
-		  with:
-		    allure_results: allure-results
-		    allure_history: allure-history
-		    keep_reports: 20
+	# 6. Compilar y Generar el Reporte de Allure
+	- name: Generar Reporte de Allure
+	  uses: simple-elf/allure-report-action@master
+	  if: always()
+	  with:
+	    allure_results: allure-results
+	    allure_history: allure-history
+	    keep_reports: 20
 
-		# 6.5 Subir los archivos generados como artefacto de Pages (Requerido por la acción oficial)
-		- name: Configurar artefacto de Pages
-		  uses: actions/upload-pages-artifact@v3
-		  if: always()
-		  with:
-		    path: allure-history
+	# 6.5 Subir los archivos generados como artefacto de Pages (Requerido por la acción oficial)
+	- name: Configurar artefacto de Pages
+	  uses: actions/upload-pages-artifact@v3
+	  if: always()
+	  with:
+	    path: allure-history
 
-		# 7. Publicar el Reporte Interactivo Gratis en GitHub Pages
-		- name: Desplegar Reporte en GitHub Pages
-		  uses: actions/deploy-pages@v4
-		  if: always()
+	# 7. Publicar el Reporte Interactivo Gratis en GitHub Pages
+	- name: Desplegar Reporte en GitHub Pages
+	  uses: actions/deploy-pages@v4
+	  if: always()
